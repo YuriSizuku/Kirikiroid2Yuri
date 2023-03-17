@@ -27,7 +27,7 @@ android {
                 cmake {
                     version '3.22.1'
                     targets 'krkr2yuri'
-                    arguments "-DCMAKE_FIND_ROOT_PATH=", "-DANDROID_STL=c++_static", "-DANDROID_TOOLCHAIN=clang", "-DANDROID_ARM_NEON=TRUE"
+                    arguments "-DCMAKE_FIND_ROOT_PATH=", "-DANDROID_STL=c++_static", "-DANDROID_TOOLCHAIN=clang", "-DOpenCV_DIR=/root/CLionProjects/Kirikiroid2Yuri/thirdparty/port/opencv/sdk/native/jni" ,"-DANDROID_ARM_NEON=TRUE"
                     cppFlags "-frtti -fexceptions -fsigned-char"
                 }
             }
@@ -60,7 +60,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
 
         debug {
@@ -68,7 +68,7 @@ android {
             jniDebuggable true
             jniDebuggable true
             renderscriptDebuggable true
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
     }
 

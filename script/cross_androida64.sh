@@ -50,7 +50,6 @@ function build_ports()
 
     # video
     build_jpeg
-    build_opencv
     build_ffmpeg
 
     # archive
@@ -105,7 +104,8 @@ cmake -B $BUILD_PATH -S $CMAKELISTS_PATH \
     -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
     -DCMAKE_TOOLCHAIN_FILE=$NDK_HOME/build/cmake/android.toolchain.cmake \
     -DANDROID_PLATFORM=21 -DANDROID_ABI=arm64-v8a \
-    -DPORTBUILD_PATH=$PORTBUILD_PATH
+    -DPORTBUILD_PATH=$PORTBUILD_PATH \
+    -DOpenCV_DIR=$CMAKELISTS_PATH/thirdparty/port/opencv/sdk/native/jni
 make -C $BUILD_PATH $TARGETS -j$CORE_NUM
 # make -C $BUILD_PATH $TARGETS -j1
 # $STRIP $BUILD_PATH/libkrkr2yuri.so
