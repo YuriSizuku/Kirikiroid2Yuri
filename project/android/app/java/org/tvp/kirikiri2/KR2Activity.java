@@ -907,8 +907,9 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
     static String[] _extSdPaths;
 
     public static String getExtSdCardFolder(final File file,Context context) {
-    	if(_extSdPaths == null)
-    		_extSdPaths = getExtSdCardPaths(context);
+    	if(_extSdPaths == null) {
+            _extSdPaths = getExtSdCardPaths(context);
+        }
         try {
             for (int i = 0; i < _extSdPaths.length; i++) {
                 if (file.getCanonicalPath().startsWith(_extSdPaths[i])) {

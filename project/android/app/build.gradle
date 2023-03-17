@@ -60,7 +60,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
 
         debug {
@@ -68,7 +68,7 @@ android {
             jniDebuggable true
             jniDebuggable true
             renderscriptDebuggable true
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
     }
 

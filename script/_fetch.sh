@@ -60,7 +60,7 @@ function fetch_opusfile()
 
 function fetch_unrar()
 {
-    UNRAR_NAME=unrarsrc-6.0.7
+    UNRAR_NAME=unrarsrc-6.2.6
     UNRAR_SRC=$CMAKELISTS_PATH/thirdparty/port/$UNRAR_NAME
     fetch_port https://www.rarlab.com/rar $UNRAR_NAME
     if [ -d $CMAKELISTS_PATH/thirdparty/port/unrar ]; then
@@ -76,14 +76,14 @@ function fetch_p7zip()
         echo "## fetch_port $P7ZIP_NAME"
         wget https://sourceforge.net/projects/p7zip/files/p7zip/16.02/p7zip_16.02_src_all.tar.bz2 \
             -O $CMAKELISTS_PATH/thirdparty/port/$P7ZIP_NAME.tar.bz2
-        tar zxf $CMAKELISTS_PATH/thirdparty/port//$P7ZIP_NAME.tar.bz2 \
+        tar jxf $CMAKELISTS_PATH/thirdparty/port//$P7ZIP_NAME.tar.bz2 \
             -C $CMAKELISTS_PATH/thirdparty/port
     fi 
 }
 
 function fetch_sdl2()
 {
-    SDL2_NAME=SDL2-2.0.14
+    SDL2_NAME=SDL2-2.26.4
     SDL2_SRC=$CMAKELISTS_PATH/thirdparty/port/$SDL2_NAME
     fetch_port https://www.libsdl.org/release $SDL2_NAME
 }
@@ -118,7 +118,13 @@ function fetch_opencv()
     OPENCV_NAME=opencv
     OPENCV_VERSION=4.7.0
     OPENCV_SRC=$CMAKELISTS_PATH/thirdparty/port/$OPENCV_NAME
-    fetch_port2 https://github.com/opencv $OPENCV_NAME $OPENCV_VERSION
+
+    if ! [ -d "$CMAKELISTS_PATH/thirdparty/port/$OPENCV_NAME" ]; then
+        echo "## fetch_port  $OPENCV_NAME $OPENCV_VERSION"
+        wget https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-android-sdk.zip -O $CMAKELISTS_PATH/thirdparty/port/opencv.zip
+        unzip $CMAKELISTS_PATH/thirdparty/port/opencv.zip
+        mv OpenCV-android-sdk $OPENCV_SRC
+    fi
 }
 
 function fetch_ffmpeg()
@@ -170,14 +176,12 @@ function fetch_cocos2dx()
     COCOS2DX_NAME=cocos2d-x
     COCOS2DX_VERSION=cocos2d-x-3.17.2
     COCOS2DX_SRC=$CMAKELISTS_PATH/thirdparty/port/$COCOS2DX_NAME
-    fetch_port2 https://github.com/cocos2d $COCOS2DX_NAME $COCOS2DX_VERSION
 
-    if ! [ -d "$CMAKELISTS_PATH/thirdparty/port/$COCOS2DX_NAME" ]; then    
-        pushd $COCOS2DX_SRC
-            python2 download-deps.py # must use cocos v3 and python2
-            git config --global url.https://github.com/.insteadOf git://github.com/
-            git submodule update --init # submodule might cuse some problem, as it use git@
-        popd
+    if ! [ -d "$CMAKELISTS_PATH/thirdparty/port/$COCOS2DX_NAME" ]; then
+        echo "## fetch_port $COCOS2DX_NAME $COCOS2DX_VERSION"
+        wget https://download.cocos.com/Cocos2D-X/cocos2d-x-3.17.2.zip -O $CMAKELISTS_PATH/thirdparty/port/cocos2d-x.zip
+        unzip $CMAKELISTS_PATH/thirdparty/port/cocos2d-x.zip
+        mv cocos2d-x-3.17.2 $COCOS2DX_SRC
     fi
 }
 
