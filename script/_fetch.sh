@@ -120,7 +120,7 @@ function fetch_opencv()
     OPENCV_SRC=$CMAKELISTS_PATH/thirdparty/port/$OPENCV_NAME
 
     if ! [ -d "$CMAKELISTS_PATH/thirdparty/port/$OPENCV_NAME" ]; then
-        echo "## fetch_port  $COCOS2DX_NAME $OPENCV_VERSION"
+        echo "## fetch_port  $OPENCV_NAME $OPENCV_VERSION"
         wget https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-android-sdk.zip -O $CMAKELISTS_PATH/thirdparty/port/opencv.zip
         unzip $CMAKELISTS_PATH/thirdparty/port/opencv.zip
         mv OpenCV-android-sdk $OPENCV_SRC
@@ -179,7 +179,7 @@ function fetch_cocos2dx()
 
     if ! [ -d "$CMAKELISTS_PATH/thirdparty/port/$COCOS2DX_NAME" ]; then
         echo "## fetch_port $COCOS2DX_NAME $COCOS2DX_VERSION"
-        wget https://digitalocean.cocos2d-x.org/Cocos2D-X/cocos2d-x-3.17.2.zip -O $CMAKELISTS_PATH/thirdparty/port/cocos2d-x.zip
+        wget https://download.cocos.com/Cocos2D-X/cocos2d-x-3.17.2.zip -O $CMAKELISTS_PATH/thirdparty/port/cocos2d-x.zip
         unzip $CMAKELISTS_PATH/thirdparty/port/cocos2d-x.zip
         mv cocos2d-x-3.17.2 $COCOS2DX_SRC
     fi
