@@ -62,7 +62,6 @@ import java.util.Locale;
 /**
  * Utility class for handling the media store.
  */
-@SuppressWarnings("ALL")
 abstract class MediaStoreUtil {
     public static Uri getUriFromFile(final String path,Context context) {
         ContentResolver resolver = context.getContentResolver();
@@ -219,11 +218,10 @@ class SDLInputConnection extends BaseInputConnection {
     }
 }
 
-@SuppressWarnings("ALL")
+
 public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     public static final int RC_WRITE_EXTERNAL = 1;
-    public static final int RC_PHONE_STATE = 2;
 
 	static ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
 	static ActivityManager mAcitivityManager = null;
@@ -243,24 +241,6 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
 	public static long getUsedMemory() {
 		return mDbgMemoryInfo.getTotalPss(); // in kB
 	}
-
-    private static void requestPhoneState() {
-        // Permission has not been granted and must be requested.
-        if (ActivityCompat.shouldShowRequestPermissionRationale(sInstance,
-                Manifest.permission.READ_PHONE_STATE)) {
-            // Provide an additional rationale to the user if the permission was not granted
-            // and the user would benefit from additional context for the use of the permission.
-            // Display a SnackBar with cda button to request the missing permission.
-            ActivityCompat.requestPermissions(sInstance,
-                    new String[]{Manifest.permission.READ_PHONE_STATE},
-                    RC_PHONE_STATE);
-
-        } else {
-            // Request the permission. The result will be received in onRequestPermissionResult().
-            ActivityCompat.requestPermissions(sInstance,
-                    new String[]{Manifest.permission.READ_PHONE_STATE}, RC_PHONE_STATE);
-        }
-    }
 
     private static void requestExternalWrite() {
         // Permission has not been granted and must be requested.
@@ -284,19 +264,11 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case RC_PHONE_STATE:
-                Log.d("Krkr2", "onRequestPermissionsResult: PHONE STATE");
-                break;
             case RC_WRITE_EXTERNAL:
                 Log.d("Krkr2", "onRequestPermissionsResult: WRITE EXTERNAL");
                 break;
         }
     }
-
-
-    static public String getDeviceId() { // ## fix android.permission.READ_PRIVILEGED_PHONE_STATE
-		return "";
-	}
 
 	static public KR2Activity sInstance;
 	static public KR2Activity GetInstance() {return sInstance;}
@@ -306,15 +278,13 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
 		sInstance = this;
         Sp = PreferenceManager.getDefaultSharedPreferences(this);
 		super.onCreate(savedInstanceState);
-	
-		if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
-			for(String path : getExtSdCardPaths(this)) {
-		        if (!isWritableNormalOrSaf(path)) {
-		            guideDialogForLEXA(path);
-		        }
-			}
-		}
-		
+
+        for (String path : getExtSdCardPaths(this)) {
+            if (!isWritableNormalOrSaf(path)) {
+                guideDialogForLEXA(path);
+            }
+        }
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestExternalWrite();
         }
@@ -508,9 +478,6 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
 	
 	static private native void onMessageBoxOK(int nButton);
 	static private native void onMessageBoxText(String text);
-	static private native void onNativeExit();
-	static public native void onNativeInit();
-	static public native void onBannerSizeChanged(int w, int h);
 	static private native void initDump(String path);
 	static private native void nativeOnLowMemory();
 	
@@ -594,7 +561,6 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
     
     private static native void nativeInsertText(final String text);
     public static native void nativeDeleteBackward();
-    private static native String nativeGetContentText();
     private static native void nativeHoverMoved(final float x, final float y);
     private static native void nativeMouseScrolled(final float scroll);
     
@@ -739,7 +705,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
             return true;
         }
         
-		@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1) @Override  
+        @Override
         public boolean onGenericMotionEvent(MotionEvent event) {
         	switch (event.getActionMasked()) {
 	        case MotionEvent.ACTION_SCROLL:
@@ -752,21 +718,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
         	return super.onGenericMotionEvent(event);
         }
     }
-    
-    //@Override
-    // ## fix private function
-//    public Cocos2dxGLSurfaceView onCreateView() {
-//        Cocos2dxGLSurfaceView glSurfaceView = new KR2GLSurfaceView(this);
-//    	hideSystemUI();
-//
-//        // this line is need on some device if we specify an alpha bits
-//        if(this.mGLContextAttrs[3] > 0) glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
-//
-//        Cocos2dxEGLConfigChooser chooser = new Cocos2dxEGLConfigChooser(this.mGLContextAttrs);
-//        glSurfaceView.setEGLConfigChooser(chooser);
-//
-//        return glSurfaceView;
-//    }
+
     
     public int get_res_sd_operate_step() { return -1; }
 
@@ -800,7 +752,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
             .show();
     }
     
-    static final boolean isWritable(final File file) {
+    static boolean isWritable(final File file) {
         if(file==null)
             return false;
         boolean isExisting = file.exists();
@@ -827,7 +779,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
         return result;
     }
 
-    static final boolean isWritableNormal(final String path) {
+    static boolean isWritableNormal(final String path) {
         boolean ret = isWritableNormalOrSaf(path);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestExternalWrite();
@@ -837,7 +789,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
     }
 
 
-    static final boolean isWritableNormalOrSaf(final String path) {
+    static boolean isWritableNormalOrSaf(final String path) {
 
         Log.i("kr2activaty","check path " + path + "permision");
 
@@ -881,7 +833,6 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
         return result;
     }
     
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private static String[] getExtSdCardPaths(Context context) {
         List<String> paths = new ArrayList<String>();
         for (File file : context.getExternalFilesDirs("external")) {
@@ -911,9 +862,9 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
             _extSdPaths = getExtSdCardPaths(context);
         }
         try {
-            for (int i = 0; i < _extSdPaths.length; i++) {
-                if (file.getCanonicalPath().startsWith(_extSdPaths[i])) {
-                    return _extSdPaths[i];
+            for (String extSdPath : _extSdPaths) {
+                if (file.getCanonicalPath().startsWith(extSdPath)) {
+                    return extSdPath;
                 }
             }
         }
@@ -996,35 +947,14 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
         if(file.renameTo(target)) return true;
         
         // Try with Storage Access Framework.
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP /*&& isOnExtSdCard(file, sInstance)*/) {
-            DocumentFile document = getDocumentFile(file, false, sInstance);
-        	if(document.renameTo(to))
-        		return true;
-        }
-        
-        // Try Media Store Hack
-        if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
-        	try {
-				FileInputStream input = new FileInputStream(file);
-	        	int filesize = (int) file.length();
-				byte []buffer = new byte[filesize];
-				input.read(buffer);
-				input.close();
-            	OutputStream out = MediaStoreHack.getOutputStream(sInstance, target.getAbsolutePath());
-                out.write(buffer);
-                out.close();
-                return MediaStoreHack.delete(sInstance, file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				return false;
-				//e.printStackTrace();
-			}
-        }
-        
-    	return false;
+        DocumentFile document = getDocumentFile(file, false, sInstance);
+        if(document.renameTo(to))
+            return true;
+
+        return false;
     }
     
-    public static final boolean deleteFilesInFolder(final File folder,Context context) {
+    public static boolean deleteFilesInFolder(final File folder,Context context) {
         boolean totalSuccess = true;
         if(folder==null)
             return false;
@@ -1051,25 +981,9 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
             return true;
 
         // Try with Storage Access Framework.
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP && isOnExtSdCard(file, sInstance)) {
-
+        if (isOnExtSdCard(file, sInstance)) {
             DocumentFile document = getDocumentFile(file, false,sInstance);
             return document.delete();
-        }
-
-        // Try the Kitkat workaround.
-        if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
-            ContentResolver resolver = sInstance.getContentResolver();
-
-            try {
-                Uri uri = MediaStoreHack.getUriFromFile(file.getAbsolutePath(),sInstance);
-                resolver.delete(uri, null, null);
-                return !file.exists();
-            }
-            catch (Exception e) {
-                Log.e("FileUtils", "Error when deleting file " + file.getAbsolutePath(), e);
-                return false;
-            }
         }
 
         return !file.exists();
@@ -1083,15 +997,10 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
 			    // standard way
 			    outStream = new FileOutputStream(target);
 			} else {
-			    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
-			        // Storage Access Framework
-			    DocumentFile targetDocument = getDocumentFile(target, false,context);
-			    outStream = context.getContentResolver().openOutputStream(targetDocument.getUri());
-			} else if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
-			    // Workaround for Kitkat ext SD card
-		        return MediaStoreHack.getOutputStream(context,target.getPath());
-		        }
-		    }
+                // Storage Access Framework
+                DocumentFile targetDocument = getDocumentFile(target, false,context);
+                outStream = context.getContentResolver().openOutputStream(targetDocument.getUri());
+            }
 		} catch (Exception e) {
 		    Log.e("FileUtils",
     			"Error when copying file from " +  target.getAbsolutePath(), e);
@@ -1100,7 +1009,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
     }
 
     
-    static public boolean WriteFile(String path, byte data[]) {
+    static public boolean WriteFile(String path, byte[] data) {
         File target = new File(path);
         if(target.exists()) {
         	DeleteFile(target.getAbsolutePath()); // to avoid number suffix name
@@ -1110,7 +1019,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
             	CreateFolders(parent.getAbsolutePath());
         }
         OutputStream out = null;
-        
+
     	// Try the normal way
     	try {
         	if(isWritable(target)) {
@@ -1121,36 +1030,24 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
         	}
 
             // Try with Storage Access Framework.
-            if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP /*&& isOnExtSdCard(file, sInstance)*/) {
-                DocumentFile document = getDocumentFile(target, false, sInstance);
-                try {
-                	Uri docUri = document.getUri();
-                    out = sInstance.getContentResolver().openOutputStream(docUri);
-                } //catch (FileNotFoundException e) {
-                    // e.printStackTrace();}
-                catch (IOException e) {
-                    // e.printStackTrace();
-                }
-            } else if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
-                // Workaround for Kitkat ext SD card
-                Uri uri = MediaStoreHack.getUriFromFile(target.getAbsolutePath(),sInstance);
-                out = sInstance.getContentResolver().openOutputStream(uri);
-            } else {
-                return false;
+            DocumentFile document = getDocumentFile(target, false, sInstance);
+            try {
+                Uri docUri = document.getUri();
+                out = sInstance.getContentResolver().openOutputStream(docUri);
+            } catch (IOException e) {
+                   e.printStackTrace();
             }
-            
+
             if (out != null) {
                 out.write(data);
                 out.close();
                 return true;
             }
-		} catch (FileNotFoundException e) {
-			//return false;
 		} catch (IOException e) {
 			//return false;
 		}
 
-    	return false;
+        return false;
     }
     
     static public boolean CreateFolders(String path) {
@@ -1162,23 +1059,8 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
     	}
 
         // Try with Storage Access Framework.
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP /*&& FileUtil.isOnExtSdCard(file, context)*/) {
-            DocumentFile document = getDocumentFile(file, true,sInstance);
-            // getDocumentFile implicitly creates the directory.
-
-            return document.exists();
-        }
-        
-        // Try the Kitkat workaround.
-        if (Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT) {
-            try {
-            	return MediaStoreHack.mkdir(sInstance,file);
-            } catch (IOException e) {
-                //return false;
-            }
-        }
-        
-    	return false;
+        DocumentFile document = getDocumentFile(file, true,sInstance);
+        return document.exists();
     }
 
     @Override
@@ -1190,8 +1072,8 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
         	hideSystemUI();
         }
     }
-    
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+
+    //todo can optimize
     void doSetSystemUiVisibility() {
 		int uiOpts = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 		        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -1204,7 +1086,7 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
 
     private static native boolean nativeGetHideSystemButton();
     void hideSystemUI() {
-    	if(nativeGetHideSystemButton() && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+    	if(nativeGetHideSystemButton()) {
     		doSetSystemUiVisibility();
     	}
     }
@@ -1234,15 +1116,13 @@ public class KR2Activity extends Cocos2dxActivity implements ActivityCompat.OnRe
     		sInstance.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     	}
     }
-    
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+
 	static public void triggerStorageAccessFramework() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
         sInstance.startActivityForResult(intent, 3);
     }
 
-    @SuppressLint("WrongConstant")
-    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
         if (requestCode == 3) {
             String p = Sp.getString("URI", null);

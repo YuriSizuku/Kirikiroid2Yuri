@@ -36,7 +36,6 @@
 USING_NS_CC;
 
 #define KR2ActJavaPath "org/tvp/kirikiri2/KR2Activity"
-//#define KR2EntryJavaPath "org/tvp/kirikiri2/Kirikiroid2"
 
 extern unsigned int __page_size = getpagesize();
 
@@ -89,75 +88,6 @@ void TVPForceSwapBuffer() {
 	eglSwapBuffers(eglGetCurrentDisplay(), eglGetCurrentSurface(EGL_DRAW));
 }
 
-std::string TVPGetDeviceID()
-{
-    std::string ret;
-
-    // use pure jni to avoid java code
-// 	jclass classID = pEnv->FindClass(KR2EntryJavaPath);
-// 	std::string strtmp("()L"); strtmp += KR2EntryJavaPath; strtmp += ";";
-// 	jmethodID methodGetInstance = pEnv->GetStaticMethodID(classID, "GetInstance", strtmp.c_str());
-// 	jobject sInstance = pEnv->CallStaticObjectMethod(classID, methodGetInstance);
-// 	jmethodID getSystemService = pEnv->GetMethodID(classID, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
-// 	jstring jstrPhone = pEnv->NewStringUTF("phone");
-// 	jobject telephonyManager = pEnv->CallObjectMethod(sInstance, getSystemService, jstrPhone);
-// 	pEnv->DeleteLocalRef(jstrPhone);
-// 
-// 	jclass clsTelephonyManager = pEnv->FindClass("android/telephony/TelephonyManager");
-// 	jmethodID getDeviceId = pEnv->GetMethodID(clsTelephonyManager, "getDeviceId", "()Ljava/lang/String;");
-// 	jstring jstrDevID = (jstring)pEnv->CallObjectMethod(telephonyManager, getDeviceId);
-// 	if (jstrDevID) {
-// 		const char *p = pEnv->GetStringUTFChars(jstrDevID, 0);
-// 		if (p && *p) {
-// 			ret = "DevID=";
-// 			ret += p;
-// 			pEnv->ReleaseStringUTFChars(jstrDevID, p);
-// 		} else {
-// 			if (p) {
-// 				pEnv->ReleaseStringUTFChars(jstrDevID, p);
-// 			}
-// 			jmethodID getContentResolver = pEnv->GetMethodID(classID, "getContentResolver", "()Landroid/content/ContentResolver;");
-// 			jobject contentResolver = pEnv->CallObjectMethod(sInstance, getContentResolver);
-// 
-// 			jclass clsSecure = pEnv->FindClass("android/provider/Settings/Secure");
-// 			if (clsSecure) {
-// 				jmethodID Secure_getString = pEnv->GetMethodID(clsSecure, "getString", "(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;");
-// 				jstring jastrAndroid_ID = pEnv->NewStringUTF("android_id");
-// 				jstring jstrAndroidID = (jstring)pEnv->CallStaticObjectMethod(clsSecure, Secure_getString, contentResolver, jastrAndroid_ID);
-// 				if (jstrAndroidID) {
-// 					const char *p = pEnv->GetStringUTFChars(jstrAndroidID, 0);
-// 					if (p && strlen(p) > 8 && strcmp(p, "9774d56d682e549c")) {
-// 						ret = "AndroidID=";
-// 						ret += p;
-// 					}
-// 				}
-// 				pEnv->ReleaseStringUTFChars(jstrAndroidID, p);
-// 				pEnv->DeleteLocalRef(jastrAndroid_ID);
-// 			}
-// 		}
-// 	}
-// 	if (ret.empty())
-	{
-		JniMethodInfo methodInfo;
-		if (JniHelper::getStaticMethodInfo(methodInfo, KR2ActJavaPath, "getDeviceId", "()Ljava/lang/String;"))
-		{
-			jstring result = (jstring)methodInfo.env->CallStaticObjectMethod(methodInfo.classID, methodInfo.methodID);
-			ret = JniHelper::jstring2string(result);
-			methodInfo.env->DeleteLocalRef(result);
-			methodInfo.env->DeleteLocalRef(methodInfo.classID);
-			char *t = (char*)ret.c_str();
-			while (*t) {
-				if (*t == ':') {
-					*t = '=';
-					break;
-				}
-				t++;
-			}
-		}
-	}
-
-    return ret;
-}
 
 static jobject GetKR2ActInstance() {
 	JniMethodInfo methodInfo;
