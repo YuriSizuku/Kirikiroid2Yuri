@@ -114,31 +114,6 @@ build_jpeg()
     popd
 }
 
-build_opencv()
-{
-    if ! [ -d $OPENCV_SRC/build_$PLATFORM ]; then mkdir -p $OPENCV_SRC/build_$PLATFORM ;fi
-
-    pushd $OPENCV_SRC/build_$PLATFORM
-    cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=MinSizeRel \
-        -DCMAKE_TOOLCHAIN_FILE=$NDK_HOME/build/cmake/android.toolchain.cmake \
-        -DANDROID_PLATFORM=21 -DANDROID_ABI=arm64-v8a \
-        -DCMAKE_INSTALL_PREFIX=$PORTBUILD_PATH \
-        -DWITH_CUDA=OFF -DWITH_MATLAB=OFF -DBUILD_ANDROID_EXAMPLES=OFF \
-        -DBUILD_DOCS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF \
-        -DBUILD_opencv_video=OFF -DBUILD_opencv_videoio=OFF -DBUILD_opencv_features2d=OFF \
-        -DBUILD_opencv_flann=OFF -DBUILD_opencv_highgui=OFF -DBUILD_opencv_ml=OFF \
-        -DBUILD_opencv_dnn=OFF -DBUILD_opencv_gapi=OFF -DBUILD_opencv_hal=ON \
-        -DBUILD_opencv_photo=OFF -DBUILD_opencv_python=OFF -DBUILD_opencv_shape=OFF \
-        -DBUILD_opencv_stitching=OFF -DBUILD_opencv_superres=OFF -DWITH_ITT=OFF \
-        -DBUILD_opencv_ts=OFF -DBUILD_opencv_videostab=OFF -DBUILD_ANDROID_PROJECTS=OFF
-    make -j$CORE_NUM &&  make install
-    
-    cp -rf  $PORTBUILD_PATH/sdk/native/3rdparty/libs/arm64-v8a/*.a $PORTBUILD_PATH/lib
-    cp -rf  $PORTBUILD_PATH/sdk/native/staticlibs/arm64-v8a/libtegra_hal.a $PORTBUILD_PATH/lib
-    
-    popd
-}
-
 build_ffmpeg() 
 {
     if ! [ -d $FFMPEG_SRC/build_$PLATFORM ]; then mkdir -p $FFMPEG_SRC/build_$PLATFORM ;fi
@@ -162,14 +137,13 @@ build_ffmpeg()
 
 # archive
 build_unrar() 
-{   
-    cp -rf $CMAKELISTS_PATH/thirdparty/patch/unrar/android_ulinks.cpp $UNRAR_SRC/ulinks.cpp
-    
+{
     pushd $UNRAR_SRC
     make clean
     make lib -j$CORE_NUM \
         CXX=aarch64-linux-android21-clang++ \
         AR=llvm-ar STRIP=llvm-strip \
+        DEFINES="-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DRAR_SMP -DUNIX_TIME_NS" \
         DESTDIR=$PORTBUILD_PATH  
     
     if ! [ -d $PORTBUILD_PATH/include/unrar ]; then mkdir -p $PORTBUILD_PATH/include/unrar ;fi 

@@ -3,6 +3,9 @@ project(krkr2core)
 
 set(KRKR2CORE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(COCOS2DX_PATH ${KRKR2CORE_PATH}/../../thirdparty/port/cocos2d-x)
+set(OpenCV_DIR ${KRKR2CORE_PATH}/../../thirdparty/port/opencv/sdk/native/jni)
+
+find_package(OpenCV 4.7 REQUIRED java)
 
 # prepare static lib
 function(add_static_library TARGET LIBNAME)

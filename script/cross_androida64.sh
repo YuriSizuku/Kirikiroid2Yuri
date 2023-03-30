@@ -50,7 +50,6 @@ function build_ports()
 
     # video
     build_jpeg
-    build_opencv
     build_ffmpeg
 
     # archive
