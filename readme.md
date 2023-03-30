@@ -90,7 +90,7 @@ major:
 - crash in game menu form  
 - game alert window button can not click  
 - member GdiPlus does not exist
-- global preference can not save
+- ~~global preference can not save~~
 
 minor:  
 
