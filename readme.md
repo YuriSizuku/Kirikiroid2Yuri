@@ -72,8 +72,13 @@ You can also download the prebuild ports from [thirdparty_ports.tar.gz](https://
 - android sdk with `ANDROID_HOME` variable in env  
 - android ndk 25.2.9519653  
 
-See `_androida64.sh` for how to build dependencies.
-Use `script/cross_android64.sh` to build ports and the use `project/android/gradlew assembleDebug` to build apk.
+Use `script/check_environment.sh` to to check if the environment is properly configured.
+See `_compile_ports.sh` for how to build dependencies.
+Use `script/build.sh` to build ports and the use `project/android/gradlew assembleDebug` to build apk.
+
+The `script/fetch.sh` script fetch the dependencies automatically. If there is an interruption such as a network problem during the process, you can just re-run the script without deleting the part that has already been pulled (manually deleting the damaged part if needed).
+
+The compilation scripts of third-party dependencies (`_compile_ports.sh`) are not perfect in determining whether they compile properly or not. So when running the `build.sh` again, you only have the option of starting over or skipping the whole compile process.
 
 ## 3. Compatibility  
 
