@@ -22,3 +22,6 @@ project/android/.idea/inspectionProfiles
 project/android/app/.cxx/**
 project/android/app/debug/**
 project/android/app/release/**
+
+# log
+script/*.log
