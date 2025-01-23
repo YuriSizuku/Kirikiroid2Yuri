@@ -76,21 +76,21 @@ extern "C" {
 		env->ReleaseStringUTFChars(text, pszText);
 	}
 
-	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesBegin(JNIEnv * env, jobject thiz, jint id, jfloat x, jfloat y) {
+	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesBegin(JNIEnv * env, jclass cls, jint id, jfloat x, jfloat y) {
 		intptr_t idlong = id;
 		Android_PushEvents([idlong, x, y](){
 			cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesBegin(1, (intptr_t*)&idlong, (float*)&x, (float*)&y);
 		});
 	}
 
-	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesEnd(JNIEnv * env, jobject thiz, jint id, jfloat x, jfloat y) {
+	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesEnd(JNIEnv * env, jclass cls, jint id, jfloat x, jfloat y) {
 		intptr_t idlong = id;
 		Android_PushEvents([idlong, x, y](){
 			cocos2d::Director::getInstance()->getOpenGLView()->handleTouchesEnd(1, (intptr_t*)&idlong, (float*)&x, (float*)&y);
 		});
 	}
 
-	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesMove(JNIEnv * env, jobject thiz, jintArray ids, jfloatArray xs, jfloatArray ys) {
+	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesMove(JNIEnv * env, jclass cls, jintArray ids, jfloatArray xs, jfloatArray ys) {
 		int size = env->GetArrayLength(ids);
 		if (size == 1) {
 			intptr_t idlong;
@@ -124,7 +124,7 @@ extern "C" {
 		});
 	}
 
-	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesCancel(JNIEnv * env, jobject thiz, jintArray ids, jfloatArray xs, jfloatArray ys) {
+	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeTouchesCancel(JNIEnv * env, jclass cls, jintArray ids, jfloatArray xs, jfloatArray ys) {
 		int size = env->GetArrayLength(ids);
 		if (size == 1) {
 			intptr_t idlong;
@@ -233,7 +233,7 @@ extern "C" {
 
 	static float _mouseX, _mouseY;
 
-	JNIEXPORT jboolean JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeHoverMoved(JNIEnv* env, jclass cls, jfloat x, jfloat y)
+	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeHoverMoved(JNIEnv* env, jclass cls, jfloat x, jfloat y)
 	{
 		Android_PushEvents([x, y]() {
 			cocos2d::GLView *glview = cocos2d::Director::getInstance()->getOpenGLView();
@@ -248,10 +248,9 @@ extern "C" {
 			event.setCursorPosition(cursorX, cursorY);
 			cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
 		});
-		return true;
 	}
 
-	JNIEXPORT jboolean JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeMouseScrolled(JNIEnv* env, jclass cls, jfloat v)
+	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeMouseScrolled(JNIEnv* env, jclass cls, jfloat v)
 	{
 		Android_PushEvents([v]() {
 			cocos2d::GLView *glview = cocos2d::Director::getInstance()->getOpenGLView();
@@ -266,7 +265,6 @@ extern "C" {
 			event.setCursorPosition(cursorX, cursorY);
 			cocos2d::Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
 		});
-		return true;
 	}
 
 	JNIEXPORT void JNICALL Java_org_tvp_kirikiri2_KR2Activity_nativeOnLowMemory(JNIEnv* env, jclass cls)

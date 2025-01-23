@@ -107,9 +107,10 @@ void iSysConfigManager::SaveToFile() {
 		}
 	}
 	doc.LinkEndChild(rootElement);
-	XMLMemPrinter stream;
-	doc.Print(&stream);
-	stream.SaveFile(GetFilePath());
+    if (doc.SaveFile(GetFilePath().c_str())) {
+        TVPShowSimpleMessageBox(LocaleConfigManager::GetInstance()->GetText("cannot_create_preference"),
+                                LocaleConfigManager::GetInstance()->GetText("readonly_storage"));
+    }
 	ConfigUpdated = false;
 }
 
